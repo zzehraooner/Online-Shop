@@ -1,0 +1,63 @@
+@model IEnumerable<OnlineShop.Models.Order>
+@{
+    ViewData["Title"] = "Sipariş Yönetimi";
+}
+
+<section class="section-padding" style="padding-top: 2rem;">
+    <div class="container">
+        <h1 class="section-title mb-4"><i class="bi bi-receipt me-2"></i>Sipariş Yönetimi</h1>
+        <div class="table-responsive">
+            <table class="table table-custom">
+                <thead>
+                    <tr>
+                        <th>Sipariş No</th>
+                        <th>Tarih</th>
+                        <th>Ürünler</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        var sc = order.Status switch
+                        {
+                            OnlineShop.Models.OrderStatus.Pending => "status-pending",
+                            OnlineShop.Models.OrderStatus.Confirmed => "status-confirmed",
+                            OnlineShop.Models.OrderStatus.Shipped => "status-shipped",
+                            OnlineShop.Models.OrderStatus.Delivered => "status-delivered",
+                            _ => "status-cancelled"
+                        };
+                        <tr>
+                            <td><a asp-action="OrderDetails" asp-route-id="@order.Id" style="color: var(--primary-light); font-weight: 600;">@order.OrderNumber</a></td>
+                            <td>@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td style="color: var(--text-muted);">@order.OrderItems.Count ürün</td>
+                            <td style="font-weight: 600;">₺@order.TotalAmount.ToString("N2")</td>
+                            <td><span class="status-badge @sc">@order.Status</span></td>
+                            <td>
+                                <form asp-action="UpdateOrderStatus" method="post" class="d-flex gap-2 align-items-center">
+                                    <input type="hidden" name="orderId" value="@order.Id" />
+                                    <select name="status" class="filter-select" style="font-size: 0.8rem; padding: 0.3rem 0.5rem;">
+                                        @foreach (OnlineShop.Models.OrderStatus status in Enum.GetValues(typeof(OnlineShop.Models.OrderStatus)))
+                                        {
+                                            if (order.Status == status)
+                                            {
+                                                <option value="@((int)status)" selected>@status</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@((int)status)">@status</option>
+                                            }
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn-secondary-custom btn-sm-custom" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Güncelle</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

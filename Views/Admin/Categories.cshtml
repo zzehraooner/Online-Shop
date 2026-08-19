@@ -1,0 +1,32 @@
+@model IEnumerable<OnlineShop.Models.Category>
+@{
+    ViewData["Title"] = "Kategori Yönetimi";
+}
+
+<section class="section-padding" style="padding-top: 2rem;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="section-title mb-0"><i class="bi bi-collection me-2"></i>Kategori Yönetimi</h1>
+            <a asp-action="CreateCategory" class="btn-primary-custom"><i class="bi bi-plus-lg"></i>Yeni Kategori</a>
+        </div>
+        <div class="row g-4">
+            @foreach (var cat in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="checkout-section" style="margin-bottom: 0;">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 style="font-weight: 600;">@cat.Name</h5>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">@(cat.Description ?? "Açıklama yok")</p>
+                                <span style="font-size: 0.8rem; color: var(--secondary);">@cat.Products.Count ürün</span>
+                            </div>
+                            <form asp-action="DeleteCategory" asp-route-id="@cat.Id" method="post" onsubmit="return confirm('Silmek istediğinizden emin misiniz?');">
+                                <button type="submit" class="btn-accent btn-sm-custom" style="padding: 0.3rem 0.6rem;"><i class="bi bi-trash3"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

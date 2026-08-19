@@ -1,0 +1,104 @@
+@model OnlineShop.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<section class="section-padding" style="padding-top: 2rem;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="section-title mb-0"><i class="bi bi-speedometer2 me-2" style="color: var(--primary);"></i>Admin Panel</h1>
+            <div class="d-flex gap-2">
+                <a asp-action="Products" class="btn-secondary-custom btn-sm-custom"><i class="bi bi-box me-1"></i>Ürünler</a>
+                <a asp-action="Categories" class="btn-secondary-custom btn-sm-custom"><i class="bi bi-collection me-1"></i>Kategoriler</a>
+                <a asp-action="Orders" class="btn-secondary-custom btn-sm-custom"><i class="bi bi-receipt me-1"></i>Siparişler</a>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card stat-purple animate-fade-in">
+                    <div class="stat-value">@Model.TotalProducts</div>
+                    <div class="stat-label">Toplam Ürün</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card stat-teal animate-fade-in animate-delay-1">
+                    <div class="stat-value">@Model.TotalOrders</div>
+                    <div class="stat-label">Toplam Sipariş</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card stat-pink animate-fade-in animate-delay-2">
+                    <div class="stat-value">@Model.TotalUsers</div>
+                    <div class="stat-label">Toplam Kullanıcı</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card stat-green animate-fade-in animate-delay-3">
+                    <div class="stat-value">₺@Model.TotalRevenue.ToString("N0")</div>
+                    <div class="stat-label">Toplam Gelir</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="checkout-section">
+                    <h4><i class="bi bi-exclamation-triangle me-2" style="color: var(--warning);"></i>Uyarılar</h4>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color: var(--text-secondary);">Bekleyen Siparişler</span>
+                        <span class="status-badge status-pending">@Model.PendingOrders</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span style="color: var(--text-secondary);">Düşük Stoklu Ürünler</span>
+                        <span class="status-badge status-cancelled">@Model.LowStockProducts</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="checkout-section">
+                    <h4><i class="bi bi-clock me-2" style="color: var(--secondary);"></i>Son Siparişler</h4>
+                    @if (Model.RecentOrders.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-custom mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Sipariş No</th>
+                                        <th>Tarih</th>
+                                        <th>Tutar</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.RecentOrders.Take(5))
+                                    {
+                                        var sc = order.Status switch
+                                        {
+                                            OnlineShop.Models.OrderStatus.Pending => "status-pending",
+                                            OnlineShop.Models.OrderStatus.Confirmed => "status-confirmed",
+                                            OnlineShop.Models.OrderStatus.Shipped => "status-shipped",
+                                            OnlineShop.Models.OrderStatus.Delivered => "status-delivered",
+                                            _ => "status-cancelled"
+                                        };
+                                        <tr>
+                                            <td><a asp-action="OrderDetails" asp-route-id="@order.Id" style="color: var(--primary-light);">@order.OrderNumber</a></td>
+                                            <td>@order.OrderDate.ToString("dd.MM.yyyy")</td>
+                                            <td style="font-weight: 600;">₺@order.TotalAmount.ToString("N2")</td>
+                                            <td><span class="status-badge @sc">@order.Status</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p style="color: var(--text-muted);">Henüz sipariş yok.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

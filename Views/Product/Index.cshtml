@@ -1,0 +1,147 @@
+@model OnlineShop.ViewModels.ProductListViewModel
+@{
+    ViewData["Title"] = "Ürünler";
+}
+
+<section class="section-padding" style="padding-top: 2rem;">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="section-title mb-3">
+                    @if (Model.SelectedCategoryId.HasValue)
+                    {
+                        var cat = Model.Categories.FirstOrDefault(c => c.Id == Model.SelectedCategoryId.Value);
+                        @(cat?.Name ?? "Ürünler")
+                    }
+                    else
+                    {
+                        <text>Tüm Ürünler</text>
+                    }
+                </h1>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-3 mb-lg-0">
+                <form asp-controller="Product" asp-action="Index" method="get" class="search-bar">
+                    <i class="bi bi-search" style="color: var(--text-muted);"></i>
+                    <input type="text" name="search" value="@Model.SearchTerm" placeholder="Ürün ara..." />
+                    @if (Model.SelectedCategoryId.HasValue)
+                    {
+                        <input type="hidden" name="categoryId" value="@Model.SelectedCategoryId" />
+                    }
+                    <button type="submit" class="btn btn-primary-custom btn-sm-custom">Ara</button>
+                </form>
+            </div>
+            <div class="col-lg-6 d-flex gap-3 justify-content-lg-end">
+                <select class="filter-select" onchange="window.location.href=this.value" id="sortSelect">
+                    <option value="@Url.Action("Index", "Product", new { search = Model.SearchTerm, categoryId = Model.SelectedCategoryId })">Sırala</option>
+                    @{
+                        var sortOptions = new[] {
+                            ("newest", "En Yeni"),
+                            ("price_asc", "Fiyat: Düşükten Yükseğe"),
+                            ("price_desc", "Fiyat: Yüksekten Düşüğe"),
+                            ("name", "Ada Göre")
+                        };
+                    }
+                    @foreach (var (val, label) in sortOptions)
+                    {
+                        if (Model.SortBy == val)
+                        {
+                            <option value="@Url.Action("Index", "Product", new { search = Model.SearchTerm, categoryId = Model.SelectedCategoryId, sortBy = val })" selected>@label</option>
+                        }
+                        else
+                        {
+                            <option value="@Url.Action("Index", "Product", new { search = Model.SearchTerm, categoryId = Model.SelectedCategoryId, sortBy = val })">@label</option>
+                        }
+                    }
+                </select>
+                <select class="filter-select" onchange="window.location.href=this.value" id="catSelect">
+                    <option value="@Url.Action("Index", "Product", new { search = Model.SearchTerm, sortBy = Model.SortBy })">Tüm Kategoriler</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        if (Model.SelectedCategoryId == cat.Id)
+                        {
+                            <option value="@Url.Action("Index", "Product", new { search = Model.SearchTerm, categoryId = cat.Id, sortBy = Model.SortBy })" selected>@cat.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@Url.Action("Index", "Product", new { search = Model.SearchTerm, categoryId = cat.Id, sortBy = Model.SortBy })">@cat.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        @if (Model.Products.Any())
+        {
+            <div class="row g-4">
+                @foreach (var product in Model.Products)
+                {
+                    <div class="col-lg-3 col-md-4 col-6 animate-fade-in">
+                        <div class="product-card">
+                            <div class="product-image">
+                                @if (product.IsFeatured)
+                                {
+                                    <span class="product-featured-badge"><i class="bi bi-star-fill me-1"></i>Öne Çıkan</span>
+                                }
+                                <img src="@(product.ImageUrl ?? "https://placehold.co/400x400/1a1a2e/6c5ce7?text=Ürün")" alt="@product.Name" loading="lazy" />
+                                <div class="product-overlay">
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn-primary-custom btn-sm-custom">
+                                        <i class="bi bi-eye"></i>Detay
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <span class="product-category">@product.Category?.Name</span>
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" style="text-decoration: none;">
+                                    <h3 class="product-name">@product.Name</h3>
+                                </a>
+                                <div class="d-flex justify-content-between align-items-end mt-2">
+                                    <span class="product-price">₺@product.Price.ToString("N2")</span>
+                                    <span class="product-stock">
+                                        @if (product.Stock > 0)
+                                        {
+                                            <span style="color: var(--success);"><i class="bi bi-check-circle-fill"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: var(--danger);">Tükendi</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="mt-5 d-flex justify-content-center">
+                    <ul class="pagination pagination-custom">
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-controller="Product" asp-action="Index"
+                                   asp-route-page="@i" asp-route-search="@Model.SearchTerm"
+                                   asp-route-categoryId="@Model.SelectedCategoryId" asp-route-sortBy="@Model.SortBy">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <h3>Ürün bulunamadı</h3>
+                <p>Arama kriterlerinizi değiştirerek tekrar deneyin.</p>
+                <a asp-controller="Product" asp-action="Index" class="btn-primary-custom">Tüm Ürünler</a>
+            </div>
+        }
+    </div>
+</section>

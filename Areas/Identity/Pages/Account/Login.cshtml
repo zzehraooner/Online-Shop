@@ -1,0 +1,60 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<link rel="stylesheet" href="~/css/luxury.css" asp-append-version="true" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<section class="luxury-hero" style="min-height: 80vh; display: flex; align-items: center; justify-content: center;">
+    <div class="hero-blob" style="opacity: 0.3;"></div>
+    <div class="container animate-fade-in" style="z-index: 2; max-width: 500px;">
+        <div class="glass-panel" style="padding: 3rem 2rem;">
+            <div class="text-center mb-4">
+                <i class="bi bi-person-circle mb-3" style="font-size: 2.5rem; color: var(--ink-primary);"></i>
+                <h2 class="luxury-title">@ViewData["Title"]</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Özel koleksiyonumuza erişmek için giriş yapın.</p>
+            </div>
+
+            <form id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" style="background: rgba(255,255,255,0.6); border: 1px solid var(--luxury-border); color: var(--text-main); border-radius: 8px;" />
+                    <label asp-for="Input.Email" class="form-label" style="color: var(--text-muted);">E-posta</label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" style="background: rgba(255,255,255,0.6); border: 1px solid var(--luxury-border); color: var(--text-main); border-radius: 8px;" />
+                    <label asp-for="Input.Password" class="form-label" style="color: var(--text-muted);">Şifre</label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-4" style="font-size: 0.9rem;">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="Input.RememberMe" style="background-color: transparent; border-color: var(--ink-primary);" />
+                        <label asp-for="Input.RememberMe" class="form-check-label" style="color: var(--text-muted);">
+                            Beni Hatırla
+                        </label>
+                    </div>
+                    <a id="forgot-password" asp-page="./ForgotPassword" style="color: var(--ink-primary); text-decoration: none;">Şifremi Unuttum</a>
+                </div>
+                
+                <div>
+                    <button id="login-submit" type="submit" class="btn-luxury-solid w-100">Giriş Yap</button>
+                </div>
+                
+                <div class="text-center mt-4" style="font-size: 0.9rem;">
+                    <p style="color: var(--text-muted);">Hesabınız yok mu? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" style="color: var(--ink-primary); text-decoration: none; font-weight: bold;">Kayıt Olun</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

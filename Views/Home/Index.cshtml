@@ -1,0 +1,132 @@
+@model OnlineShop.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Ana Sayfa - Özel Koleksiyon";
+}
+
+<!-- Custom Styles for Luxury Theme -->
+<link rel="stylesheet" href="~/css/luxury.css" asp-append-version="true" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<!-- Hero Section -->
+<section class="luxury-hero">
+    <div class="hero-blob"></div>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 z-2 animate-fade-in">
+                <div class="luxury-subtitle">Private Collection</div>
+                <h1 class="luxury-title display-2 mb-4" style="line-height: 1.1;">Zarafetin<br>Yeniden Tanımı</h1>
+                <p class="mb-5" style="color: var(--text-muted); font-size: 1.1rem; max-width: 450px; line-height: 1.8;">
+                    Sadece seçkin zevklere hitap eden, el yapımı detaylar ve zamansız tasarımlarla bezenmiş en özel koleksiyonumuzu keşfedin.
+                </p>
+                <div class="d-flex gap-4 align-items-center">
+                    <a asp-controller="Product" asp-action="Index" class="btn-luxury-solid">Koleksiyonu İncele</a>
+                    <a href="#brand-story" class="btn-luxury" style="border-color: transparent;">Hikayemiz</a>
+                </div>
+            </div>
+            <div class="col-lg-6 z-2 animate-fade-in animate-delay-2 mt-5 mt-lg-0">
+                <div class="glass-panel" style="padding: 1rem;">
+                    <img src="https://images.unsplash.com/photo-1549439602-43ebca2327af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Luxury Watch" style="width: 100%; border-radius: 16px; display: block;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Brand Values -->
+<section class="section-padding" style="position: relative; z-index: 2;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4 animate-fade-in">
+                <div class="glass-panel value-card">
+                    <i class="bi bi-gem value-icon"></i>
+                    <h3 class="mb-3" style="font-family: 'Playfair Display', serif;">Eşsiz İşçilik</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">Her bir parça, ustalarımızın ellerinde mükemmellik arayışıyla özenle şekillenir.</p>
+                </div>
+            </div>
+            <div class="col-md-4 animate-fade-in animate-delay-1">
+                <div class="glass-panel value-card">
+                    <i class="bi bi-star value-icon"></i>
+                    <h3 class="mb-3" style="font-family: 'Playfair Display', serif;">Premium Materyaller</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">Dünyanın en nadide ve kaliteli materyalleri, kalıcı bir miras bırakmak için seçildi.</p>
+                </div>
+            </div>
+            <div class="col-md-4 animate-fade-in animate-delay-2">
+                <div class="glass-panel value-card">
+                    <i class="bi bi-shield-check value-icon"></i>
+                    <h3 class="mb-3" style="font-family: 'Playfair Display', serif;">Ayrıcalıklı Hizmet</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">Kişisel stil danışmanınızla, alışveriş deneyiminizi kusursuz bir ritüele dönüştürüyoruz.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Showcase -->
+@if (Model != null && Model.FeaturedProducts != null && Model.FeaturedProducts.Any())
+{
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5 pb-3">
+                <div class="luxury-subtitle">Öne Çıkanlar</div>
+                <h2 class="luxury-title display-4">Küratörün Seçimi</h2>
+            </div>
+            <div class="row g-5">
+                @foreach (var product in Model.FeaturedProducts.Take(3))
+                {
+                    <div class="col-lg-4 animate-fade-in">
+                        <div class="glass-panel showcase-item">
+                            <div class="showcase-image-wrapper">
+                                <img src="@(product.ImageUrl ?? "https://placehold.co/400x400/1a1a2e/6c5ce7")" alt="@product.Name" class="showcase-image" />
+                            </div>
+                            <div class="text-center mt-auto">
+                                <span style="font-size: 0.8rem; letter-spacing: 2px; color: var(--ink-primary); text-transform: uppercase;">@product.Category?.Name</span>
+                                <h3 class="mt-2 mb-3" style="font-family: 'Playfair Display', serif; font-size: 1.5rem;">@product.Name</h3>
+                                <div style="font-size: 1.2rem; font-weight: 300; margin-bottom: 1.5rem;">₺@product.Price.ToString("N0")</div>
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn-luxury w-100 text-center" style="font-size: 0.8rem;">İncele</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Storytelling Section -->
+<section id="brand-story" class="section-padding" style="position: relative;">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 animate-fade-in">
+                <div class="luxury-subtitle">Mirasımız</div>
+                <h2 class="luxury-title display-4 mb-4">Zamanın<br>Ötesinde</h2>
+                <p class="mb-4" style="color: var(--text-muted); line-height: 1.8;">
+                    Gerçek lüks, sadece sahip olmak değil, bir hikayenin parçası olmaktır. Tasarımlarımız, geçmişin zarafetini geleceğin vizyonuyla harmanlayarak, size sadece bir ürün değil, nesilden nesile aktarılacak bir miras sunuyor.
+                </p>
+                <a href="#" class="btn-luxury" style="border-color: transparent; padding-left: 0;">Daha Fazla Oku <i class="bi bi-arrow-right ms-2"></i></a>
+            </div>
+            <div class="col-lg-6 offset-lg-1 animate-fade-in animate-delay-1">
+                <div class="position-relative">
+                    <div style="position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: var(--ink-glow); filter: blur(30px); border-radius: 50%;"></div>
+                    <img src="https://images.unsplash.com/photo-1618214227845-66299b9dd1fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Brand Story" class="img-fluid rounded" style="box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid var(--luxury-border);" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Exclusive Membership CTA -->
+<section class="membership-section">
+    <div class="container text-center animate-fade-in">
+        <div class="glass-panel" style="padding: 5rem 2rem; max-width: 800px; margin: 0 auto;">
+            <i class="bi bi-envelope-paper mb-4" style="font-size: 3rem; color: var(--ink-primary);"></i>
+            <h2 class="luxury-title mb-3">Özel Kulübe Katılın</h2>
+            <p class="mb-5 mx-auto" style="color: var(--text-muted); max-width: 500px; line-height: 1.6;">
+                Yeni koleksiyonlardan ilk sizin haberiniz olsun, özel davetiyelere ve sadece üyelere özel fiyatlandırmalara erişim sağlayın.
+            </p>
+            <form class="d-flex gap-2 max-w-md mx-auto justify-content-center" style="max-width: 400px;">
+                <input type="email" class="form-control" placeholder="E-posta adresiniz" style="background: rgba(255,255,255,0.6); border: 1px solid var(--luxury-border); color: var(--text-main); border-radius: 30px; padding: 0.8rem 1.5rem;" />
+                <button type="button" class="btn-luxury-solid" style="padding: 0.8rem 2rem;">Davet İste</button>
+            </form>
+        </div>
+    </div>
+</section>
